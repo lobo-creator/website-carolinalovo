@@ -1,28 +1,32 @@
 from pathlib import Path
 
-def renombrar_archivos_en_misma_carpeta():
+def reemplazar_guion_punto():
     # Carpeta donde está este script
     carpeta_path = Path(__file__).parent
-    script_name = Path(__file__).name  # para NO renombrar este archivo
+    script_name = Path(__file__).name  # nombre del propio script
 
     print(f"Carpeta de trabajo: {carpeta_path}")
 
     for archivo in carpeta_path.iterdir():
-        # Solo archivos, y que no sea el propio script
         if archivo.is_file() and archivo.name != script_name:
-            nombre_actual = archivo.stem      # sin extensión
-            extension = archivo.suffix        # con el punto, ej: ".html"
+            nombre_actual = archivo.name
 
-            # nuevo nombre: todo en minúsculas + guion antes de la extensión
-            nuevo_nombre = nombre_actual.lower() + "-" + extension.lower()
-            nuevo_path = archivo.with_name(nuevo_nombre)
+            # Nuevo nombre reemplazando '-.' por '.'
+            nuevo_nombre = nombre_actual.replace("-.", ".")
 
-            if nuevo_path.exists():
-                print(f"⚠️ Saltando '{archivo.name}' → '{nuevo_nombre}' (ya existe)")
+            # Si no hay cambio, continuar
+            if nuevo_nombre == nombre_actual:
                 continue
 
-            print(f"Renombrando: '{archivo.name}' → '{nuevo_nombre}'")
+            nuevo_path = archivo.with_name(nuevo_nombre)
+
+            # Evitar sobreescribir archivos existentes
+            if nuevo_path.exists():
+                print(f"⚠️ Saltando '{nombre_actual}' → '{nuevo_nombre}' (ya existe un archivo con ese nombre)")
+                continue
+
+            print(f"Renombrando: '{nombre_actual}' → '{nuevo_nombre}'")
             archivo.rename(nuevo_path)
 
 if __name__ == "__main__":
-    renombrar_archivos_en_misma_carpeta()
+    reemplazar_guion_punto()
